@@ -29,7 +29,7 @@
 
 ```sql unprofitable_total
 SELECT 
-    COUNT(*) as unprofitable_count,
+    COUNT(*) as unprofitable_count ,
     count(distinct Customer_number) as customers,
     SUM(profit) as total_loss,
     SUM(revenue) as revenue_at_risk
