@@ -1,0 +1,6 @@
+# This file was automatically generated
+name: databricks
+type: databricks
+options:
+  host: dbc-7a169b12-be78.cloud.databricks.com
+  path: /sql/1.0/warehouses/9db58ee93d911b84
