@@ -2,8 +2,6 @@
 title: Q4 2023 Performance Overview
 ---
 
-
-
 ## Key Performance Indicators
 ```sql q4_metrics
 SELECT * FROM q4_summary
@@ -158,3 +156,4 @@ LIMIT 5
     labels=true
 />
 </Grid>
+
