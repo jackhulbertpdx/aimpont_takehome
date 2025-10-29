@@ -1,11 +1,10 @@
--- Inventory flow: Production → Oct Inventory → Nov Inventory → Dec Inventory → Sold
+-- Inventory flow: Production by Facility → Oct → Nov → Dec → Final Status
 WITH production_batches AS (
     SELECT DISTINCT
         ip.Production_ID,
         ip.Facility,
         MIN(il.production_date) as production_date,
-        MAX(il.total_produced_tons) as total_produced_tons,
-        MAX(il.Product_Type) as Product_Type
+        MAX(il.total_produced_tons) as total_produced_tons
     FROM aimpoint.default.invoice_production ip
     JOIN aimpoint.default.invoice_lines il 
         ON ip.Facility = il.Facility 
@@ -16,7 +15,7 @@ WITH production_batches AS (
 monthly_status AS (
     SELECT 
         pb.Production_ID,
-        pb.Product_Type,
+        pb.Facility,
         pb.total_produced_tons,
         -- October status
         CASE 
@@ -59,34 +58,34 @@ monthly_status AS (
         END as dec_status
     FROM production_batches pb
 )
--- Flow from Production to Oct
+-- Flow from Facility Production to Oct Status
 SELECT 
-    Product_Type as source,
-    CONCAT(Product_Type, ' - ', oct_status) as target,
+    Facility as source,
+    CONCAT(Facility, ' - ', oct_status) as target,
     SUM(total_produced_tons) as value
 FROM monthly_status
-GROUP BY Product_Type, oct_status
+GROUP BY Facility, oct_status
 
 UNION ALL
 
--- Flow from Oct to Nov (only inventory that wasn't sold in Oct)
+-- Flow from Oct Inventory to Nov Status (only unsold inventory)
 SELECT 
-    CONCAT(Product_Type, ' - Inventory Oct 31') as source,
-    CONCAT(Product_Type, ' - ', nov_status) as target,
+    CONCAT(Facility, ' - Inventory Oct 31') as source,
+    CONCAT(Facility, ' - ', nov_status) as target,
     SUM(total_produced_tons) as value
 FROM monthly_status
 WHERE oct_status = 'Inventory Oct 31'
-GROUP BY Product_Type, nov_status
+GROUP BY Facility, nov_status
 
 UNION ALL
 
--- Flow from Nov to Dec (only inventory that wasn't sold by Nov)
+-- Flow from Nov Inventory to Dec Status (only unsold inventory)
 SELECT 
-    CONCAT(Product_Type, ' - Inventory Nov 30') as source,
-    CONCAT(Product_Type, ' - ', dec_status) as target,
+    CONCAT(Facility, ' - Inventory Nov 30') as source,
+    CONCAT(Facility, ' - ', dec_status) as target,
     SUM(total_produced_tons) as value
 FROM monthly_status
 WHERE nov_status = 'Inventory Nov 30'
-GROUP BY Product_Type, dec_status
+GROUP BY Facility, dec_status
 
 ORDER BY source, target
