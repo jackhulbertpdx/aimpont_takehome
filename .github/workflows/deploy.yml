@@ -43,3 +43,10 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: List build contents
+        working-directory: ad
+        run: |
+          echo "Build directory structure:"
+          find build -type f | head -20
+          echo "---"
+          ls -la build/
