@@ -1,5 +1,5 @@
 -- Inventory flow: Production by Facility → Oct → Nov → Dec → Final Status
-WITH production_batches AS (
+WITH production_batches AS ( 
     SELECT DISTINCT
         ip.Production_ID,
         ip.Facility,
