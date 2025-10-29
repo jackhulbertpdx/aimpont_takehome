@@ -1,9 +1,7 @@
 name: Deploy to GitHub Pages
-
 on:
   push:
-    branches: 'main' # or whichever branch you want to deploy from
-
+    branches: ['main']
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,38 +13,30 @@ jobs:
         with:
           node-version: 20
           cache: npm
-
       - name: Install dependencies
         run: npm install
-
       - name: build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
-          ## Add and uncomment any environment variables her
-          EVIDENCE_SOURCE__dbx__host="dbc-7a169b12-be78.cloud.databricks.com"
-          EVIDENCE_SOURCE__dbx__path="/sql/1.0/warehouses/9db58ee93d911b84"
-          EVIDENCE_SOURCE__dbx__token="dapi1e99899de30c1d604830e90da84ac181"
+          EVIDENCE_SOURCE__dbx__host: "dbc-7a169b12-be78.cloud.databricks.com"
+          EVIDENCE_SOURCE__dbx__path: "/sql/1.0/warehouses/9db58ee93d911b84"
+          EVIDENCE_SOURCE__dbx__token: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           npm run sources
           npm run build
-
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'build/${{ github.event.repository.name }}'
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
-
     permissions:
       pages: write
       id-token: write
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - name: Deploy
         id: deployment
