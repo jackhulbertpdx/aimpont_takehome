@@ -39,3 +39,7 @@
     "axios": "^1.7.4"
   }
 }
+
+# evidence.config.yaml
+deployment:
+  basePath: /aimpoint_takehome
