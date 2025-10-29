@@ -1,5 +1,5 @@
 # This file was automatically generated
-name: databricks
+name: dbx
 type: databricks
 options:
   host: dbc-7a169b12-be78.cloud.databricks.com
