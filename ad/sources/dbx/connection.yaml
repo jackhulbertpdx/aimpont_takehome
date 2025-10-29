@@ -1,6 +1,9 @@
 # This file was automatically generated
-name: dbx
 type: databricks
+name: dbx
 options:
   host: dbc-7a169b12-be78.cloud.databricks.com
   path: /sql/1.0/warehouses/9db58ee93d911b84
+# Advanced Options, you probably don't want to change this
+buildOptions:
+  batchSize: 1000000
