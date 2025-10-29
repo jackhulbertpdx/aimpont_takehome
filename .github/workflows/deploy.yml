@@ -9,17 +9,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Debug repo structure  # NEW DEBUG STEP HERE
-        run: |
-          echo "=== Root directory ==="
-          ls -la
-          echo ""
-          echo "=== Looking for ad folder ==="
-          find . -name "ad" -type d
-          echo ""
-          echo "=== All directories ==="
-          find . -maxdepth 2 -type d
-      
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
@@ -30,37 +19,23 @@ jobs:
       - name: Install dependencies
         working-directory: ad
         run: npm install
-
-      - name: build
+      
+      - name: Build site
         working-directory: ad
         env:
+          BASE_PATH: '/aimpont_takehome'
           EVIDENCE_SOURCE__dbx__host: "dbc-7a169b12-be78.cloud.databricks.com"
           EVIDENCE_SOURCE__dbx__path: "/sql/1.0/warehouses/9db58ee93d911b84"
           EVIDENCE_SOURCE__dbx__token: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           npm run sources
           npm run build
-
-      - name: Debug build output  # ADD THIS NEW STEP
-        working-directory: ad
-        run: |
-          echo "=== Build directory contents ==="
-          ls -la build/
-          echo ""
-          echo "=== First 30 files in build ==="
-          find build -type f | head -30
-          echo ""
-          echo "=== Looking for index.html ==="
-          find build -name "index.html"
-          echo ""
-          echo "=== Looking for _app directory ==="
-          ls -la build/_app/ 2>/dev/null || echo "_app directory not found"
       
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'ad/build'
-    
+  
   deploy:
     needs: build
     runs-on: ubuntu-latest
